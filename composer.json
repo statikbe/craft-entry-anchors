@@ -1,0 +1,66 @@
+{
+  "name": "statikbe/craft-entry-anchors",
+  "description": "Anchor titles for Craft CMS blocks, and an anchor dropdown on Link fields to link to a block on an entry",
+  "type": "craft-plugin",
+  "keywords": [
+    "craft",
+    "cms",
+    "craftcms",
+    "craft-plugin",
+    "anchor",
+    "link",
+    "jump link"
+  ],
+  "support": {
+    "docs": "https://github.com/statikbe/craft-entry-anchors/blob/main/README.md",
+    "issues": "https://github.com/statikbe/craft-entry-anchors/issues"
+  },
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Statik",
+      "homepage": "https://www.statik.be"
+    }
+  ],
+  "require": {
+    "php": "^8.2",
+    "craftcms/cms": "^5.10.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "statikbe\\entryanchors\\": "src/"
+    }
+  },
+  "extra": {
+    "name": "Entry Anchors",
+    "handle": "entry-anchors",
+    "developer": "Statik",
+    "developerUrl": "https://www.statik.be",
+    "documentationUrl": "https://github.com/statikbe/craft-entry-anchors/blob/main/README.md",
+    "class": "statikbe\\entryanchors\\EntryAnchors"
+  },
+  "config": {
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true,
+      "pestphp/pest-plugin": true
+    }
+  },
+  "require-dev": {
+    "pestphp/pest": "^3.0",
+    "craftcms/ecs": "dev-main",
+    "craftcms/phpstan": "dev-main",
+    "phpstan/phpstan": "^2.0"
+  },
+  "scripts": {
+    "check-cs": "ecs check --ansi",
+    "fix-cs": "ecs check --ansi --fix",
+    "phpstan": "phpstan --memory-limit=1G",
+    "test": "pest",
+    "ci": [
+      "@check-cs",
+      "@phpstan",
+      "@test"
+    ]
+  }
+}

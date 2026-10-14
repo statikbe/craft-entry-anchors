@@ -1,0 +1,16 @@
+{% import '_includes/forms' as forms %}
+
+<div class="flex flex-nowrap entry-anchors-anchorlink">
+    <div class="flex-grow">
+        {{ forms.text({
+            id: id,
+            name: field.handle,
+            value: value,
+            maxlength: 255,
+        }) }}
+    </div>
+
+    <button type="button" id="{{ id }}-copy" class="btn" data-icon="link" disabled
+            title="{{ 'Copy the link to this block'|t('entry-anchors') }}"
+            aria-label="{{ 'Copy the link to this block'|t('entry-anchors') }}"></button>
+</div>

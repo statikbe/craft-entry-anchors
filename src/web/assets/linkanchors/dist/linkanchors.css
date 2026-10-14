@@ -1,0 +1,16 @@
+/* Entry select and anchor dropdown side by side, wrapping below each other when there's not enough room */
+.entry-anchors-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.entry-anchors-select {
+    flex: 1;
+    max-width: 100%;
+}
+
+.entry-anchors-select select {
+    max-width: 100%;
+}
