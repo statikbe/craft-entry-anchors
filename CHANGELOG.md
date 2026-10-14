@@ -1,6 +1,6 @@
 # Release Notes for Entry Anchors
 
-## Unreleased
+## 1.0.0-beta.4 - 2026-10-14
 
 ### Changed
 - The anchor editor below the title has an "Apply" and a "Cancel" button: the anchor only changes when the edit is applied (Enter applies, Escape cancels)
