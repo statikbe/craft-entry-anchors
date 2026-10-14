@@ -11,10 +11,15 @@
             }) }}
         </div>
 
-        <button type="button" id="{{ id }}-copy" class="btn" data-icon="link" disabled
-                title="{{ 'Copy the link to this block'|t('entry-anchors') }}"
-                aria-label="{{ 'Copy the link to this block'|t('entry-anchors') }}"></button>
+        {# Copies the page URL + #anchor (a link icon), or only #anchor (an anchor icon): the copyFormat setting #}
+        {% set copyLabel = copyFormat == 'anchor' ? 'Copy the anchor of this block'|t('entry-anchors') : 'Copy the link to this block'|t('entry-anchors') %}
+        <button type="button" id="{{ id }}-copy" class="btn" disabled title="{{ copyLabel }}" aria-label="{{ copyLabel }}">
+            <div class="cp-icon">{{ iconSvg(copyFormat == 'anchor' ? 'anchor' : 'link') }}</div>
+        </button>
     </div>
+
+    {# The anchor that is saved; it only changes when the title is followed or an edit is applied #}
+    <input type="hidden" id="{{ id }}-anchor" name="{{ field.handle }}[anchor]" value="{{ value.anchor ?? '' }}">
 
     {# The anchor: shown below the title, editable after "Edit" #}
     <div id="{{ id }}-anchor-line" class="entry-anchors-anchor{{ value ? '' : ' hidden' }}">
@@ -23,16 +28,21 @@
         <button type="button" id="{{ id }}-anchor-edit" class="btn small">{{ 'Edit'|t('app') }}</button>
     </div>
     <div id="{{ id }}-anchor-field" class="entry-anchors-anchor-field hidden">
-        {{ forms.text({
-            id: id ~ '-anchor',
-            name: field.handle ~ '[anchor]',
-            value: value.anchor ?? '',
-            maxlength: 255,
-            class: 'code',
-            inputAttributes: {
-                aria: { label: 'Anchor'|t('entry-anchors') },
-            },
-        }) }}
+        <div class="flex flex-nowrap">
+            <div class="flex-grow">
+                {{ forms.text({
+                    id: id ~ '-anchor-input',
+                    value: value.anchor ?? '',
+                    maxlength: 255,
+                    class: 'code',
+                    inputAttributes: {
+                        aria: { label: 'Anchor'|t('entry-anchors') },
+                    },
+                }) }}
+            </div>
+            <button type="button" id="{{ id }}-anchor-apply" class="btn submit">{{ 'Apply'|t('app') }}</button>
+            <button type="button" id="{{ id }}-anchor-cancel" class="btn">{{ 'Cancel'|t('app') }}</button>
+        </div>
         <p class="light smalltext">{{ 'The anchor is kept when the title changes, so links to this block keep working. Changing it breaks those links.'|t('entry-anchors') }}</p>
     </div>
 </div>

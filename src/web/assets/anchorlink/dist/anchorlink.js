@@ -1,7 +1,8 @@
 /**
  * Anchor Link fields (see statikbe\entryanchors\fields\AnchorLink):
  * - the anchor follows the title while the block isn't published yet (settings.follow), and is kept after that;
- * - "Edit" shows the anchor input; editing it stops the anchor from following the title;
+ * - "Edit" opens the anchor editor; "Apply" (or Enter) makes the edited anchor the anchor and stops it from following the
+ *   title, "Cancel" (or Escape) leaves it as it was;
  * - the copy button copies the link to the block, `#anchor` or the page URL + `#anchor` (the copyFormat setting).
  * Slugs come from the server (the same slugs the front end uses), fetched while typing, so the copy happens right in the click.
  */
@@ -12,6 +13,8 @@
     $anchorLine: null,
     $anchorLabel: null,
     $anchorField: null,
+    $anchorInput: null,
+    $apply: null,
     $copy: null,
     follow: false,
     anchor: null,
@@ -26,74 +29,102 @@
       this.$anchorLine = $('#' + id + '-anchor-line');
       this.$anchorLabel = $('#' + id + '-anchor-label');
       this.$anchorField = $('#' + id + '-anchor-field');
+      this.$anchorInput = $('#' + id + '-anchor-input');
+      this.$apply = $('#' + id + '-anchor-apply');
       this.$copy = $('#' + id + '-copy');
 
       this.anchor = this.$anchor.val() || null;
-      this.$copy.prop('disabled', !this.anchor);
+      this.setCopyEnabled(!!this.anchor);
 
       this.addListener(this.$title, 'input', () => {
         if (this.follow || !this.$anchor.val()) {
-          this.debounce(() => this.slugify(this.$title.val(), true));
+          clearTimeout(this.timeout);
+          this.setCopyEnabled(false);
+          this.timeout = setTimeout(() => this.slugify(this.$title.val()).then((anchor) => this.setAnchor(anchor)), 300);
         }
         this.updateVisibility();
       });
 
-      this.addListener(this.$anchor, 'input', () => {
-        // A hand-made anchor is kept
-        this.follow = false;
-        this.debounce(() => this.slugify(this.$anchor.val() || this.$title.val(), false));
-      });
-
-      this.addListener($('#' + id + '-anchor-edit'), 'click', () => {
-        this.$anchorField.removeClass('hidden');
-        this.$anchorLine.addClass('hidden');
-        this.$anchor.trigger('focus');
+      this.addListener($('#' + id + '-anchor-edit'), 'click', 'openEditor');
+      this.addListener(this.$apply, 'click', 'applyEdit');
+      this.addListener($('#' + id + '-anchor-cancel'), 'click', 'closeEditor');
+      this.addListener(this.$anchorInput, 'keydown', (event) => {
+        // Enter applies the anchor instead of submitting the entry form, Escape cancels (and keeps a slideout open)
+        if (event.keyCode === Garnish.RETURN_KEY) {
+          event.preventDefault();
+          this.applyEdit();
+        } else if (event.keyCode === Garnish.ESC_KEY) {
+          event.preventDefault();
+          event.stopPropagation();
+          this.closeEditor();
+        }
       });
 
       this.addListener(this.$copy, 'click', 'copy');
       this.updateVisibility();
     },
 
-    debounce(callback) {
-      clearTimeout(this.timeout);
-      this.$copy.prop('disabled', true);
-      this.timeout = setTimeout(callback, 300);
+    openEditor() {
+      this.$anchorInput.val(this.$anchor.val());
+      this.$anchorField.removeClass('hidden');
+      this.updateVisibility();
+      this.$anchorInput.trigger('focus').trigger('select');
+    },
+
+    closeEditor() {
+      this.$anchorField.addClass('hidden');
+      this.updateVisibility();
     },
 
     /**
-     * The anchor for a text; with setInput, it also goes into the anchor input (when following the title).
+     * The edited anchor becomes the anchor (as a slug; empty falls back to the title) and is kept from now on.
      */
-    slugify(text, setInput) {
+    applyEdit() {
+      this.$apply.addClass('loading').prop('disabled', true);
+      this.slugify(this.$anchorInput.val() || this.$title.val())
+        .then((anchor) => {
+          this.follow = false;
+          this.setAnchor(anchor);
+          this.closeEditor();
+        })
+        .finally(() => this.$apply.removeClass('loading').prop('disabled', false));
+    },
+
+    /**
+     * The anchor for a text, from the server (the same slugs the front end uses). Resolves with null for an empty text, and
+     * only for the last request.
+     */
+    slugify(text) {
       text = (text || '').trim();
       const request = ++this.request;
 
       if (!text) {
-        this.setAnchor(null, setInput);
-        return;
+        return Promise.resolve(null);
       }
 
-      Craft.sendActionRequest('GET', 'entry-anchors/anchors/slug', { params: { title: text } }).then((response) => {
-        // Only the answer to the last request counts
-        if (request === this.request) {
-          this.setAnchor(response.data.slug || null, setInput);
+      return Craft.sendActionRequest('GET', 'entry-anchors/anchors/slug', { params: { title: text } }).then((response) => {
+        if (request !== this.request) {
+          return new Promise(() => {});
         }
+        return response.data.slug || null;
       });
     },
 
-    setAnchor(anchor, setInput) {
+    setAnchor(anchor) {
       this.anchor = anchor;
       this.$anchorLabel.text('#' + (anchor || ''));
-      this.$copy.prop('disabled', !anchor);
+      this.setCopyEnabled(!!anchor);
+      // Trigger change so the element editor saves a draft
+      this.$anchor.val(anchor || '').trigger('change');
+    },
 
-      if (setInput) {
-        // Trigger change so the element editor saves a draft
-        this.$anchor.val(anchor || '').trigger('change');
-      }
+    setCopyEnabled(enabled) {
+      this.$copy.prop('disabled', !enabled).toggleClass('disabled', !enabled);
     },
 
     updateVisibility() {
       const hasTitle = !!this.$title.val().trim();
-      // The anchor line, unless the anchor input is open
+      // The anchor line, unless the anchor editor is open
       this.$anchorLine.toggleClass('hidden', !hasTitle || !this.$anchorField.hasClass('hidden'));
     },
 

@@ -1,5 +1,14 @@
 # Release Notes for Entry Anchors
 
+## Unreleased
+
+### Changed
+- The anchor editor below the title has an "Apply" and a "Cancel" button: the anchor only changes when the edit is applied (Enter applies, Escape cancels)
+- The copy button shows an anchor icon when it copies only the anchor (`copyFormat: 'anchor'`), a link icon when it copies the full URL
+
+### Fixed
+- The copy button's icon wasn't shown
+
 ## 1.0.0-beta.3 - 2026-10-14
 
 ### Added

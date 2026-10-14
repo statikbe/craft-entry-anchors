@@ -92,6 +92,7 @@ JS, [
             'field' => $this,
             'id' => $id,
             'value' => $value instanceof AnchorData ? $value : null,
+            'copyFormat' => EntryAnchors::getInstance()->getSettings()->copyFormat,
         ]);
     }
 
