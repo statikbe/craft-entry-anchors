@@ -1,6 +1,6 @@
 # Release Notes for Entry Anchors
 
-## Unreleased
+## 1.0.0-beta.1 - 2026-10-14
 
 ### Added
 - Anchor Link field type, with a copy button for the link to the block
