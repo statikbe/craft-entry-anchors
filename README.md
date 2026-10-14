@@ -2,7 +2,8 @@
 
 Link to a block on a page. Editors give a block an anchor title, and Link fields get a dropdown with the anchors of the linked entry.
 
-- **Anchor Link field**: a plain text field for a block's title. The front end renders the title with its slug as id, and the
+- **Anchor Link field**: a block's title and its anchor. The anchor follows the title while the block is new and is kept after
+  that, so links keep working when the title changes. The front end renders it as the heading's id with `anchor_id()`, and the
   copy button next to the field copies the link to the block.
 - **Anchor dropdown on Link fields**: when an editor picks an entry in a Link field, a dropdown next to it lists the anchors on
   that entry (the Anchor Link fields on the entry and its nested entries, in page order). The chosen anchor is stored in the
@@ -24,16 +25,30 @@ php craft plugin/install entry-anchors
 ### Anchor Link field
 
 Create a field of the "Anchor Link" type (e.g. "Title (Anchor)") and add it to the entry types of your blocks. Render the title
-with its slug as id:
+with its anchor as id:
 
 ```twig
 {% if block.blockTitle|length %}
-    <h2 id="{{ block.blockTitle|slugify }}">{{ block.blockTitle }}</h2>
+    <h2 id="{{ anchor_id(block.blockTitle) }}">{{ block.blockTitle }}</h2>
 {% endif %}
 ```
 
-The slug must be Craft's `ElementHelper::generateSlug()`, the same as the anchors in the dropdown. The Statik base install has a
-`|slugify` filter for this.
+In templates the field's value is the title (`{{ block.blockTitle }}`, `block.blockTitle|length`); the anchor is
+`block.blockTitle.anchor`.
+
+`anchor_id()` keeps ids unique on the page: a second block with the same anchor gets `-2`, a third `-3` … The first one keeps the
+anchor, and that's where links to it go. It also takes a plain text and uses its slug.
+
+#### The anchor
+
+Below the title the editor sees the anchor (`Anchor: #how-long-does-a-project-take`) with an "Edit" button:
+
+- while the block isn't on a published page yet (a new block, or one that only exists in a draft), the anchor follows the title,
+  like Craft's entry slug;
+- after that it is kept: changing the title doesn't change the anchor, so links to the block keep working;
+- editors can change it, e.g. to make it shorter; it is saved as a slug, and an empty anchor falls back to the title.
+
+Values from before 1.0.0-beta.3 (only a title) get the slug of that title as anchor, the id they were rendered with.
 
 ### Anchor dropdown on Link fields
 

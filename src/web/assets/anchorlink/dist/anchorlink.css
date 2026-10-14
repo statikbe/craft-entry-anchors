@@ -1,0 +1,20 @@
+/* The anchor below the title */
+.entry-anchors-anchor {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.entry-anchors-anchor code {
+    word-break: break-all;
+}
+
+.entry-anchors-anchor-field {
+    margin-top: 6px;
+}
+
+.entry-anchors-anchor-field p {
+    margin: 4px 0 0;
+}

@@ -1,16 +1,38 @@
 {% import '_includes/forms' as forms %}
 
-<div class="flex flex-nowrap entry-anchors-anchorlink">
-    <div class="flex-grow">
-        {{ forms.text({
-            id: id,
-            name: field.handle,
-            value: value,
-            maxlength: 255,
-        }) }}
+<div class="entry-anchors-anchorlink">
+    <div class="flex flex-nowrap">
+        <div class="flex-grow">
+            {{ forms.text({
+                id: id,
+                name: field.handle ~ '[title]',
+                value: value.title ?? '',
+                maxlength: 255,
+            }) }}
+        </div>
+
+        <button type="button" id="{{ id }}-copy" class="btn" data-icon="link" disabled
+                title="{{ 'Copy the link to this block'|t('entry-anchors') }}"
+                aria-label="{{ 'Copy the link to this block'|t('entry-anchors') }}"></button>
     </div>
 
-    <button type="button" id="{{ id }}-copy" class="btn" data-icon="link" disabled
-            title="{{ 'Copy the link to this block'|t('entry-anchors') }}"
-            aria-label="{{ 'Copy the link to this block'|t('entry-anchors') }}"></button>
+    {# The anchor: shown below the title, editable after "Edit" #}
+    <div id="{{ id }}-anchor-line" class="entry-anchors-anchor{{ value ? '' : ' hidden' }}">
+        <span class="light">{{ 'Anchor'|t('entry-anchors') }}:</span>
+        <code id="{{ id }}-anchor-label">#{{ value.anchor ?? '' }}</code>
+        <button type="button" id="{{ id }}-anchor-edit" class="btn small">{{ 'Edit'|t('app') }}</button>
+    </div>
+    <div id="{{ id }}-anchor-field" class="entry-anchors-anchor-field hidden">
+        {{ forms.text({
+            id: id ~ '-anchor',
+            name: field.handle ~ '[anchor]',
+            value: value.anchor ?? '',
+            maxlength: 255,
+            class: 'code',
+            inputAttributes: {
+                aria: { label: 'Anchor'|t('entry-anchors') },
+            },
+        }) }}
+        <p class="light smalltext">{{ 'The anchor is kept when the title changes, so links to this block keep working. Changing it breaks those links.'|t('entry-anchors') }}</p>
+    </div>
 </div>

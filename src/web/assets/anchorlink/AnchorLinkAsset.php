@@ -6,7 +6,7 @@ use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
 
 /**
- * The copy button of Anchor Link fields (see dist/anchorlink.js).
+ * Anchor Link fields: the anchor below the title and the copy button (see dist/anchorlink.js).
  */
 class AnchorLinkAsset extends AssetBundle
 {
@@ -18,5 +18,9 @@ class AnchorLinkAsset extends AssetBundle
 
     public $js = [
         'anchorlink.js',
+    ];
+
+    public $css = [
+        'anchorlink.css',
     ];
 }

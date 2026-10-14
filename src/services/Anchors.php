@@ -9,6 +9,7 @@ use craft\fields\Matrix;
 use craft\helpers\ElementHelper;
 use statikbe\entryanchors\EntryAnchors;
 use statikbe\entryanchors\fields\AnchorLink;
+use statikbe\entryanchors\fields\data\AnchorData;
 
 /**
  * The anchors on an entry: the Anchor Link fields on the entry and its nested entries.
@@ -16,7 +17,7 @@ use statikbe\entryanchors\fields\AnchorLink;
 class Anchors extends Component
 {
     /**
-     * The anchor (slug) for a title, the same as the `|slugify`/ElementHelper::generateSlug() the front end uses for the id.
+     * The anchor (slug) for a title or a hand-made anchor: Craft's slug, as for entry slugs.
      */
     public function slug(string $title): string
     {
@@ -24,7 +25,8 @@ class Anchors extends Component
     }
 
     /**
-     * All anchors on an entry, in the order they appear on the page.
+     * All anchors on an entry, in the order they appear on the page. The first block with an anchor gets it as id on the page
+     * (see anchor_id()), so that's where a link to it goes.
      *
      * @return array<array{label: string, value: string}>
      */
@@ -48,11 +50,10 @@ class Anchors extends Component
     {
         foreach ($element->getFieldLayout()?->getCustomFields() ?? [] as $field) {
             if ($field instanceof AnchorLink) {
-                $title = trim((string)$element->getFieldValue($field->handle));
+                $value = $element->getFieldValue($field->handle);
 
-                if ($title !== '') {
-                    $slug = $this->slug($title);
-                    $options[$slug] ??= ['label' => $title, 'value' => $slug];
+                if ($value instanceof AnchorData) {
+                    $options[$value->anchor] ??= ['label' => $value->title, 'value' => $value->anchor];
                 }
             } elseif ($field instanceof Matrix && $depth < $maxDepth && ($fields === null || in_array($field->handle, $fields, true))) {
                 foreach ($element->getFieldValue($field->handle)->all() as $nestedEntry) {

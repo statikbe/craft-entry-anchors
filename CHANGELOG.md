@@ -1,5 +1,14 @@
 # Release Notes for Entry Anchors
 
+## 1.0.0-beta.3 - 2026-10-14
+
+### Added
+- The Anchor Link field stores the anchor next to the title: it follows the title while the block isn't published yet and is kept after that, so links keep working when the title changes. Editors can change it below the title.
+- `anchor_id()` Twig function: the id for a block's heading, from the stored anchor and unique on the page
+
+### Changed
+- Use `anchor_id(block.blockTitle)` for heading ids instead of a slug of the title. Values from before (only a title) get the slug of that title as anchor, so their ids don't change.
+
 ## 1.0.0-beta.2 - 2026-10-14
 
 ### Added
