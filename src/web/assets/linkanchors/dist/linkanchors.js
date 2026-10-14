@@ -1,6 +1,7 @@
 /**
- * Anchor dropdown for Link fields (see statikbe\entryanchors\services\LinkFields).
- * Lists the anchors of the selected entry and writes the chosen one to the URL suffix input as `#slug`.
+ * Anchor dropdowns for Link fields (see statikbe\entryanchors\services\LinkFields).
+ * - EntryAnchorsLinkField: the anchors of the selected entry, the chosen one goes to the URL suffix input as `#slug`.
+ * - EntryAnchorsUrlField: the anchors of the page the field is on, the chosen one becomes the URL (`#slug`).
  */
 (function ($) {
   Craft.EntryAnchorsLinkField = Garnish.Base.extend({
@@ -28,6 +29,8 @@
       }
 
       this.$entry.addClass('entry-anchors-container').append(this.$wrapper);
+      // Craft centers the link type select vertically, which drops it when the dropdown wraps below the entry select
+      this.$entry.parent().addClass('entry-anchors-row');
       this.$wrapper.toggleClass('hidden', !settings.hasEntry);
       this.render();
 
@@ -125,6 +128,108 @@
     setSuffix(value) {
       // Trigger change so the element editor saves a draft
       this.$suffix.val(value).trigger('change');
+    },
+  });
+
+  Craft.EntryAnchorsUrlField = Garnish.Base.extend({
+    $url: null,
+    $type: null,
+    $linkInput: null,
+    $wrapper: null,
+    $select: null,
+    options: [],
+
+    init(id, settings) {
+      this.settings = settings;
+      this.options = settings.options || [];
+      this.$url = $('#' + id + '-url');
+      this.$type = $('#' + id + '-type');
+      this.$linkInput = this.$url.closest('.link-input');
+      this.$select = $('#' + id + '-page-anchor');
+      this.$wrapper = this.$select.closest('.entry-anchors-select');
+
+      if (!this.$url.length || !this.$linkInput.length || !this.$url.children('input[type=hidden]').length) {
+        this.$wrapper.remove();
+        return;
+      }
+
+      // Below the link row: the URL container itself is drawn as the input box
+      this.$wrapper.addClass('entry-anchors-below').insertAfter(this.$linkInput);
+      this.render();
+
+      this.addListener(this.$select, 'change', 'onSelectChange');
+      // Typing in the URL input (bubbles up from the text input, which Craft recreates)
+      this.addListener(this.$url, 'input', 'render');
+      this.addListener(this.$type, 'change', 'updateVisibility');
+      this.addListener(Garnish.$win, 'resize', 'updateVisibility');
+    },
+
+    /**
+     * Rebuild the dropdown, selecting the anchor in the URL. Hidden when the page has no anchors and the URL isn't one.
+     */
+    render() {
+      const anchor = this.currentAnchor();
+      const options = [{ value: '', label: this.settings.labels.none }, ...this.options];
+
+      if (anchor && !this.options.some((option) => option.value === anchor)) {
+        options.push({ value: anchor, label: anchor + ' (' + this.settings.labels.notFound + ')' });
+      }
+
+      this.$select.empty();
+      options.forEach((option) => {
+        this.$select.append($('<option>', { value: option.value, text: option.label }));
+      });
+      this.$select.val(anchor || '');
+      this.updateVisibility();
+    },
+
+    /**
+     * Only for the URL link type, and only when the page has anchors or the URL is one. Lined up with the URL input.
+     */
+    updateVisibility() {
+      const isUrl = !this.$type.length || this.$type.val() === 'url';
+      this.$wrapper.toggleClass('hidden', !isUrl || this.$select.children().length === 1);
+
+      if (!this.$wrapper.hasClass('hidden')) {
+        this.$wrapper.css('margin-inline-start', Math.max(0, this.$url.offset().left - this.$linkInput.offset().left));
+      }
+    },
+
+    onSelectChange() {
+      const anchor = this.$select.val();
+
+      if (anchor) {
+        this.setUrl('#' + anchor);
+      } else if (this.currentAnchor() !== null) {
+        this.setUrl('');
+      }
+    },
+
+    /**
+     * The anchor in the URL, if the URL is one.
+     */
+    currentAnchor() {
+      const url = (this.$url.children('input[type=hidden]').val() || '').trim();
+
+      return url.startsWith('#') ? url.substring(1) : null;
+    },
+
+    setUrl(value) {
+      const linkInput = this.$url.data('linkInput');
+      const $hidden = this.$url.children('input[type=hidden]');
+
+      // Through Craft's URL input, so its chip/text input and the link label follow
+      if (linkInput && typeof linkInput.createTextInput === 'function') {
+        linkInput.createTextInput(value);
+        if (value && typeof linkInput.maybeSwitchToChip === 'function') {
+          linkInput.maybeSwitchToChip();
+        }
+      } else {
+        $hidden.val(value);
+      }
+
+      // Trigger change so the element editor saves a draft
+      $hidden.trigger('change');
     },
   });
 })(jQuery);

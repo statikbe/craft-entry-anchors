@@ -8,6 +8,8 @@ return [
     'Could not copy the anchor link.' => 'Impossible de copier le lien d’ancre.',
 
     // Anchor dropdown on Link fields
+    'URL/Anchor' => 'URL/Ancre',
+    'Anchor on this page' => 'Ancre sur cette page',
     'Anchor' => 'Ancre',
     'No anchor' => 'Pas d’ancre',
     'not found' => 'introuvable',

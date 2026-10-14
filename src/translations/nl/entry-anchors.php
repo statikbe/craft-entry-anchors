@@ -8,6 +8,8 @@ return [
     'Could not copy the anchor link.' => 'De ankerlink kon niet gekopieerd worden.',
 
     // Anchor dropdown on Link fields
+    'URL/Anchor' => 'URL/Anker',
+    'Anchor on this page' => 'Anker op deze pagina',
     'Anchor' => 'Anker',
     'No anchor' => 'Geen anker',
     'not found' => 'niet gevonden',

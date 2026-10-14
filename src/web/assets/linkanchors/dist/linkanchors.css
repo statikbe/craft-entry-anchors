@@ -1,3 +1,8 @@
+/* The link type select stays next to the entry select when the anchor dropdown wraps below it */
+.entry-anchors-row {
+    align-items: flex-start;
+}
+
 /* Entry select and anchor dropdown side by side, wrapping below each other when there's not enough room */
 .entry-anchors-container {
     display: flex;
@@ -13,4 +18,9 @@
 
 .entry-anchors-select select {
     max-width: 100%;
+}
+
+/* Below the link row, lined up with the URL input (see EntryAnchorsUrlField) */
+.entry-anchors-below {
+    margin-top: 8px;
 }

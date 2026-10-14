@@ -45,8 +45,15 @@ next to the entry select:
 - typing `#something` in the URL suffix selects it in the dropdown, query params (`?p=1`) are left alone;
 - switching to another link type clears the anchor.
 
-The dropdown is added to Craft's Link field markup by JS. If a Craft update changes that markup, the dropdown stays away and
-the anchor can still be typed in the URL suffix.
+### Anchors on the same page
+
+When the URL type of a Link field allows anchors ("Allow anchors" in its settings), the link type is called "URL/Anchor" and a
+dropdown below the URL input lists the anchors of the page the field is on (the entry that owns it, also when the field is in
+a nested entry). Choosing one sets the URL to `#slug`. The list is the page as it was saved (or autosaved) when the editor
+opened it.
+
+The dropdowns are added to Craft's Link field markup by JS. If a Craft update changes that markup, the dropdowns stay away and
+anchors can still be typed.
 
 ## Configuration
 
