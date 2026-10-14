@@ -18,7 +18,8 @@ use yii\db\Schema;
  *
  * Like Craft's slug, the anchor follows the title while the block isn't published yet, and is kept after that: changing the
  * title doesn't break links to the block. Editors can change the anchor below the title, e.g. to make it shorter.
- * The copy button copies the link to the block. The anchor dropdowns on Link fields list these anchors.
+ * Two subtle copy buttons: after the title the link to the block (page URL + #anchor), on the anchor line only the anchor.
+ * The anchor dropdowns on Link fields list these anchors.
  */
 class AnchorLink extends Field
 {
@@ -72,6 +73,8 @@ class AnchorLink extends Field
     protected function inputHtml(mixed $value, ?ElementInterface $element, bool $inline): string
     {
         $id = $this->getInputId();
+        // Nested entries (content builder blocks) have no URL of their own, the page they are on has
+        $url = $element ? (ElementHelper::rootElement($element)->getUrl() ?? '') : '';
         $view = Craft::$app->getView();
         $view->registerAssetBundle(AnchorLinkAsset::class);
         $view->registerJsWithVars(fn($id, $settings) => <<<JS
@@ -79,12 +82,11 @@ new Craft.EntryAnchorsAnchorLink($id, $settings);
 JS, [
             $view->namespaceInputId($id),
             [
-                // Nested entries (content builder blocks) have no URL of their own, the page they are on has
-                'url' => $element ? (ElementHelper::rootElement($element)->getUrl() ?? '') : '',
-                'copyFormat' => EntryAnchors::getInstance()->getSettings()->copyFormat,
+                'url' => $url,
                 'follow' => !$value instanceof AnchorData || $this->isUnpublished($element),
-                'copied' => Craft::t('entry-anchors', 'Anchor link copied to clipboard.'),
-                'failed' => Craft::t('entry-anchors', 'Could not copy the anchor link.'),
+                'linkCopied' => Craft::t('entry-anchors', 'Link copied to clipboard.'),
+                'anchorCopied' => Craft::t('entry-anchors', 'Anchor copied to clipboard.'),
+                'failed' => Craft::t('entry-anchors', 'Could not copy to the clipboard.'),
             ],
         ]);
 
@@ -92,7 +94,7 @@ JS, [
             'field' => $this,
             'id' => $id,
             'value' => $value instanceof AnchorData ? $value : null,
-            'copyFormat' => EntryAnchors::getInstance()->getSettings()->copyFormat,
+            'hasUrl' => $url !== '',
         ]);
     }
 

@@ -3,7 +3,7 @@
  * - the anchor follows the title while the block isn't published yet (settings.follow), and is kept after that;
  * - "Edit" opens the anchor editor; "Apply" (or Enter) makes the edited anchor the anchor and stops it from following the
  *   title, "Cancel" (or Escape) leaves it as it was;
- * - the copy button copies the link to the block, `#anchor` or the page URL + `#anchor` (the copyFormat setting).
+ * - two copy buttons: after the title the link to the block (the page URL + `#anchor`), on the anchor line only `#anchor`.
  * Slugs come from the server (the same slugs the front end uses), fetched while typing, so the copy happens right in the click.
  */
 (function ($) {
@@ -15,7 +15,8 @@
     $anchorField: null,
     $anchorInput: null,
     $apply: null,
-    $copy: null,
+    $copyLink: null,
+    $copyAnchor: null,
     follow: false,
     anchor: null,
     request: 0,
@@ -31,7 +32,8 @@
       this.$anchorField = $('#' + id + '-anchor-field');
       this.$anchorInput = $('#' + id + '-anchor-input');
       this.$apply = $('#' + id + '-anchor-apply');
-      this.$copy = $('#' + id + '-copy');
+      this.$copyLink = $('#' + id + '-copy-link');
+      this.$copyAnchor = $('#' + id + '-copy-anchor');
 
       this.anchor = this.$anchor.val() || null;
       this.setCopyEnabled(!!this.anchor);
@@ -60,7 +62,8 @@
         }
       });
 
-      this.addListener(this.$copy, 'click', 'copy');
+      this.addListener(this.$copyLink, 'click', () => this.copy(this.settings.url + '#' + this.anchor, this.settings.linkCopied, this.$copyLink));
+      this.addListener(this.$copyAnchor, 'click', () => this.copy('#' + this.anchor, this.settings.anchorCopied, this.$copyAnchor));
       this.updateVisibility();
     },
 
@@ -119,7 +122,7 @@
     },
 
     setCopyEnabled(enabled) {
-      this.$copy.prop('disabled', !enabled).toggleClass('disabled', !enabled);
+      this.$copyLink.add(this.$copyAnchor).prop('disabled', !enabled);
     },
 
     updateVisibility() {
@@ -128,29 +131,28 @@
       this.$anchorLine.toggleClass('hidden', !hasTitle || !this.$anchorField.hasClass('hidden'));
     },
 
-    copy() {
+    copy(text, message, $button) {
       if (!this.anchor) {
         return;
       }
 
-      const anchor = '#' + this.anchor;
-      const text = this.settings.copyFormat === 'anchor' || !this.settings.url ? anchor : this.settings.url + anchor;
-      const copied = () => Craft.cp.displayNotice(this.settings.copied);
+      const copied = () => Craft.cp.displayNotice(message);
+      const failed = () => Craft.cp.displayError(this.settings.failed);
 
       if (!navigator.clipboard) {
-        this.copyFallback(text) ? copied() : Craft.cp.displayError(this.settings.failed);
+        this.copyFallback(text, $button) ? copied() : failed();
         return;
       }
 
       navigator.clipboard.writeText(text).then(copied, () => {
-        this.copyFallback(text) ? copied() : Craft.cp.displayError(this.settings.failed);
+        this.copyFallback(text, $button) ? copied() : failed();
       });
     },
 
     /**
      * When the Clipboard API isn't there or isn't allowed (http, some browsers' permissions).
      */
-    copyFallback(text) {
+    copyFallback(text, $button) {
       const $textarea = $('<textarea>', { readonly: true, css: { position: 'fixed', top: 0, left: 0, opacity: 0 } })
         .val(text)
         .appendTo(document.body);
@@ -162,7 +164,7 @@
         copied = false;
       }
       $textarea.remove();
-      this.$copy.trigger('focus');
+      $button.trigger('focus');
 
       return copied;
     },

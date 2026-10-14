@@ -11,11 +11,14 @@
             }) }}
         </div>
 
-        {# Copies the page URL + #anchor (a link icon), or only #anchor (an anchor icon): the copyFormat setting #}
-        {% set copyLabel = copyFormat == 'anchor' ? 'Copy the anchor of this block'|t('entry-anchors') : 'Copy the link to this block'|t('entry-anchors') %}
-        <button type="button" id="{{ id }}-copy" class="btn" disabled title="{{ copyLabel }}" aria-label="{{ copyLabel }}">
-            <div class="cp-icon">{{ iconSvg(copyFormat == 'anchor' ? 'anchor' : 'link') }}</div>
-        </button>
+        {# Copies the link to the block: the page URL + #anchor (not for elements without a URL) #}
+        {% if hasUrl %}
+            <button type="button" id="{{ id }}-copy-link" class="btn chromeless entry-anchors-copy" disabled
+                    title="{{ 'Copy the link to this block'|t('entry-anchors') }}"
+                    aria-label="{{ 'Copy the link to this block'|t('entry-anchors') }}">
+                <div class="cp-icon">{{ iconSvg('link') }}</div>
+            </button>
+        {% endif %}
     </div>
 
     {# The anchor that is saved; it only changes when the title is followed or an edit is applied #}
@@ -25,6 +28,11 @@
     <div id="{{ id }}-anchor-line" class="entry-anchors-anchor{{ value ? '' : ' hidden' }}">
         <span class="light">{{ 'Anchor'|t('entry-anchors') }}:</span>
         <code id="{{ id }}-anchor-label">#{{ value.anchor ?? '' }}</code>
+        <button type="button" id="{{ id }}-copy-anchor" class="btn chromeless entry-anchors-copy"
+                title="{{ 'Copy the anchor of this block'|t('entry-anchors') }}"
+                aria-label="{{ 'Copy the anchor of this block'|t('entry-anchors') }}">
+            <div class="cp-icon">{{ iconSvg('anchor') }}</div>
+        </button>
         <button type="button" id="{{ id }}-anchor-edit" class="btn small">{{ 'Edit'|t('app') }}</button>
     </div>
     <div id="{{ id }}-anchor-field" class="entry-anchors-anchor-field hidden">

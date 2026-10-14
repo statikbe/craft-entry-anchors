@@ -1,13 +1,15 @@
 # Entry Anchors
 
-Link to a block on a page. Editors give a block an anchor title, and Link fields get a dropdown with the anchors of the linked entry.
+Link to a block on a page. Editors give a block an anchor title, and Link fields get dropdowns with the anchors to link to.
 
 - **Anchor Link field**: a block's title and its anchor. The anchor follows the title while the block is new and is kept after
-  that, so links keep working when the title changes. The front end renders it as the heading's id with `anchor_id()`, and the
-  copy button next to the field copies the link to the block.
-- **Anchor dropdown on Link fields**: when an editor picks an entry in a Link field, a dropdown next to it lists the anchors on
-  that entry (the Anchor Link fields on the entry and its nested entries, in page order). The chosen anchor is stored in the
+  that, so links keep working when the title changes. The front end renders it as the heading's id with `anchor_id()`. Two
+  subtle buttons copy the link to the block and its anchor.
+- **Anchor dropdown for linked entries**: when an editor picks an entry in a Link field, a dropdown next to it lists the anchors
+  on that entry (the Anchor Link fields on the entry and its nested entries, in page order). The chosen anchor is stored in the
   Link field's URL suffix as `#slug`, so `link.url` ends with it. No template changes needed.
+- **Anchor dropdown for the same page**: Link fields whose URL type allows anchors get a dropdown with the anchors of the page
+  the field is on; choosing one sets the URL to `#slug`.
 
 ## Requirements
 
@@ -43,10 +45,23 @@ anchor, and that's where links to it go. It also takes a plain text and uses its
 
 Below the title the editor sees the anchor (`Anchor: #how-long-does-a-project-take`) with an "Edit" button:
 
+![An Anchor Link field: the title "Frequently asked questions", a link icon after it, and below it "Anchor: #frequently-asked-questions" with an anchor icon and an Edit button](docs/images/anchor-link-field.png)
+
 - while the block isn't on a published page yet (a new block, or one that only exists in a draft), the anchor follows the title,
   like Craft's entry slug;
 - after that it is kept: changing the title doesn't change the anchor, so links to the block keep working;
-- editors can change it, e.g. to make it shorter; it is saved as a slug, and an empty anchor falls back to the title.
+- editors can change it, e.g. to make it shorter: "Edit" opens the anchor, and it only changes after "Apply" (or Enter);
+  "Cancel" (or Escape) leaves it as it was. It is saved as a slug, and an empty anchor falls back to the title. Changing an
+  anchor breaks the links that use the old one; the editor says so, and the dropdowns mark those links "not found".
+
+![The anchor editor open below the title: the anchor "faq" with Apply and Cancel buttons, and a note that changing the anchor breaks links to the block](docs/images/anchor-editor.png)
+
+#### Copy buttons
+
+Two subtle buttons copy to the clipboard:
+
+- after the title: the link to the block, the page URL + `#anchor` (not shown for entries without a URL);
+- on the anchor line: only `#anchor`, e.g. for a link on the same page.
 
 Values from before 1.0.0-beta.3 (only a title) get the slug of that title as anchor, the id they were rendered with.
 
@@ -54,6 +69,8 @@ Values from before 1.0.0-beta.3 (only a title) get the slug of that title as anc
 
 Enable "URL Suffix" under "Advanced fields" in the settings of a Link field with the "Entry" link type. The dropdown appears
 next to the entry select:
+
+![A Link field set to Entry: the FAQ page is selected, and the anchor dropdown next to it shows "How long does a project take?"](docs/images/link-field-entry-anchor.png)
 
 - picking another entry loads its anchors and clears the anchor;
 - a saved anchor that no longer exists on the entry stays selected, marked "not found";
@@ -67,6 +84,8 @@ dropdown below the URL input lists the anchors of the page the field is on (the 
 a nested entry). Choosing one sets the URL to `#slug`. The list is the page as it was saved (or autosaved) when the editor
 opened it.
 
+![A Link field set to URL/Anchor: the URL is #ready-to-get-started, chosen in the dropdown below it ("Ready to get started?")](docs/images/link-field-page-anchor.png)
+
 The dropdowns are added to Craft's Link field markup by JS. If a Craft update changes that markup, the dropdowns stay away and
 anchors can still be typed.
 
@@ -78,8 +97,6 @@ Create `config/entry-anchors.php`:
 <?php
 
 return [
-    // What the copy button of an Anchor Link field copies: 'url' (page URL + #slug) or 'anchor' (only #slug)
-    'copyFormat' => 'url',
     // How deep to look into nested entries for anchors (content builder → row → cell → FAQ items, ...)
     'maxDepth' => 3,
     // Handles of the Matrix fields to look into for anchors (the handle in the field layout), null for every Matrix field

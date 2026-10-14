@@ -18,3 +18,25 @@
 .entry-anchors-anchor-field p {
     margin: 4px 0 0;
 }
+
+/* The copy buttons: subtle, until hovered or focused */
+.entry-anchors-copy.btn.chromeless {
+    min-height: 0;
+    padding-inline: 4px;
+    color: var(--light-text-color, #606d7b);
+    opacity: .6;
+}
+
+.entry-anchors-copy.btn.chromeless:hover,
+.entry-anchors-copy.btn.chromeless:focus-visible {
+    color: var(--text-color, #1f2937);
+    opacity: 1;
+}
+
+.entry-anchors-copy.btn.chromeless[disabled] {
+    opacity: .25;
+}
+
+.entry-anchors-anchor .entry-anchors-copy .cp-icon {
+    --icon-size: 0.75rem;
+}

@@ -1,5 +1,14 @@
 # Release Notes for Entry Anchors
 
+## 1.0.0 - 2026-10-14
+
+### Changed
+- Anchor Link fields have two subtle copy buttons: the link to the block after the title, the anchor on the anchor line
+- README screenshots (in `docs/images`, left out of the Composer package)
+
+### Removed
+- The `copyFormat` setting; a `copyFormat` in `config/entry-anchors.php` is ignored
+
 ## 1.0.0-beta.4 - 2026-10-14
 
 ### Changed

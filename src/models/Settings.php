@@ -10,11 +10,6 @@ use craft\base\Model;
 class Settings extends Model
 {
     /**
-     * What the copy button of an Anchor Link field copies: 'url' (the page URL + #slug) or 'anchor' (only #slug)
-     */
-    public string $copyFormat = 'url';
-
-    /**
      * How deep to look into nested entries for anchors (content builder → row → cell → FAQ items, ...)
      */
     public int $maxDepth = 3;
@@ -30,7 +25,6 @@ class Settings extends Model
     protected function defineRules(): array
     {
         return [
-            [['copyFormat'], 'in', 'range' => ['url', 'anchor']],
             [['maxDepth'], 'integer', 'min' => 0],
             [['fields'], 'each', 'rule' => ['string']],
         ];
