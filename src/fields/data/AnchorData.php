@@ -6,7 +6,7 @@ use craft\base\Serializable;
 use Stringable;
 
 /**
- * The value of an Anchor Link field: the block's title and its anchor (slug).
+ * The value of an Anchor Text field: the block's title and its anchor (slug).
  *
  * The anchor is set from the title once and then kept, so links to it keep working when the title changes. In templates the
  * value is the title: `{{ block.blockTitle }}`, `block.blockTitle|length`; the anchor is `block.blockTitle.anchor`, or

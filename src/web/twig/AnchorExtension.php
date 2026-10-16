@@ -23,7 +23,7 @@ class AnchorExtension extends AbstractExtension
     }
 
     /**
-     * The anchor of an Anchor Link field value (or a slug of a plain text), unique on the page: a second block with the same
+     * The anchor of an Anchor Text field value (or a slug of a plain text), unique on the page: a second block with the same
      * anchor gets `-2`, a third `-3` … The first one keeps the anchor, links to it go there.
      */
     public function anchorId(mixed $value): string

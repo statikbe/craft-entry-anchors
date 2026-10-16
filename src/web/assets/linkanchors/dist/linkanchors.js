@@ -1,7 +1,8 @@
 /**
  * Anchor dropdowns for Link fields (see statikbe\entryanchors\services\LinkFields).
  * - EntryAnchorsLinkField: the anchors of the selected entry, the chosen one goes to the URL suffix input as `#slug`.
- * - EntryAnchorsUrlField: the anchors of the page the field is on, the chosen one becomes the URL (`#slug`).
+ * - EntryAnchorsUrlField: the anchors of the page the field is on, the chosen one becomes the URL (`#slug`) and its title the
+ *   label (unless the editor typed one).
  */
 (function ($) {
   Craft.EntryAnchorsLinkField = Garnish.Base.extend({
@@ -137,12 +138,16 @@
     $linkInput: null,
     $wrapper: null,
     $select: null,
+    $label: null,
     options: [],
+    autoLabel: null,
 
     init(id, settings) {
       this.settings = settings;
       this.options = settings.options || [];
       this.$url = $('#' + id + '-url');
+      // Craft's "Label" input, when the field shows it (the field's legend has the same id)
+      this.$label = $('input[id="' + id + '-label"]');
       this.$type = $('#' + id + '-type');
       this.$linkInput = this.$url.closest('.link-input');
       this.$select = $('#' + id + '-page-anchor');
@@ -156,6 +161,11 @@
       // Below the link row: the URL container itself is drawn as the input box
       this.$wrapper.addClass('entry-anchors-below').insertAfter(this.$linkInput);
       this.render();
+      // A label that is the title of the anchor in the URL counts as filled in by the dropdown: it follows another anchor
+      const title = this.titleOf(this.currentAnchor());
+      if (title && this.$label.val() === title) {
+        this.autoLabel = title;
+      }
 
       this.addListener(this.$select, 'change', 'onSelectChange');
       // Typing in the URL input (bubbles up from the text input, which Craft recreates)
@@ -203,6 +213,29 @@
       } else if (this.currentAnchor() !== null) {
         this.setUrl('');
       }
+      this.updateLabel(this.titleOf(anchor));
+    },
+
+    /**
+     * The label becomes the title of the chosen anchor (as in the dropdown) instead of the URL `#anchor`, unless the editor
+     * typed a label of their own.
+     */
+    updateLabel(title) {
+      if (!this.$label.length) {
+        return;
+      }
+
+      const label = this.$label.val();
+      if (label && label !== this.autoLabel) {
+        return;
+      }
+
+      this.autoLabel = title || null;
+      this.$label.val(title || '').trigger('input').trigger('change');
+    },
+
+    titleOf(anchor) {
+      return (anchor && this.options.find((option) => option.value === anchor)?.label) || null;
     },
 
     /**

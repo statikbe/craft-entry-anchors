@@ -1,8 +1,8 @@
 <?php
 
 return [
-    // Anchor Link field
-    'Anchor Link' => 'Ankerlink',
+    // Anchor Text field
+    'Anchor Text' => 'Ankertekst',
     'The anchor is kept when the title changes, so links to this block keep working. Changing it breaks those links.' => 'Het anker blijft behouden als de titel verandert, zodat links naar dit blok blijven werken. Als je het wijzigt, werken die links niet meer.',
     'Link copied to clipboard.' => 'Link gekopieerd naar het klembord.',
     'Anchor copied to clipboard.' => 'Anker gekopieerd naar het klembord.',

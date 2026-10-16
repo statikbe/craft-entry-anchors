@@ -1,5 +1,5 @@
 /**
- * Anchor Link fields (see statikbe\entryanchors\fields\AnchorLink):
+ * Anchor Text fields (see statikbe\entryanchors\fields\AnchorLink):
  * - the anchor follows the title while the block isn't published yet (settings.follow), and is kept after that;
  * - "Edit" opens the anchor editor; "Apply" (or Enter) makes the edited anchor the anchor and stops it from following the
  *   title, "Cancel" (or Escape) leaves it as it was;

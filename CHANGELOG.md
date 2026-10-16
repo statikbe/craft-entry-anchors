@@ -1,5 +1,11 @@
 # Release Notes for Entry Anchors
 
+## 1.0.1 - 2026-10-16
+
+### Changed
+- The field type is called "Anchor Text" (was "Anchor Link"): the field is the block's title, with an anchor to link to. Existing fields keep working, only the name in the field type list changes
+- Choosing an anchor in the "URL/Anchor" dropdown fills the Link field's label with the anchor's title (as in the dropdown) instead of leaving `#anchor` as the label. A label the editor typed is kept
+
 ## 1.0.0 - 2026-10-14
 
 ### Changed

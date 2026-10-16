@@ -12,7 +12,7 @@ use statikbe\entryanchors\fields\AnchorLink;
 use statikbe\entryanchors\fields\data\AnchorData;
 
 /**
- * The anchors on an entry: the Anchor Link fields on the entry and its nested entries.
+ * The anchors on an entry: the Anchor Text fields on the entry and its nested entries.
  */
 class Anchors extends Component
 {

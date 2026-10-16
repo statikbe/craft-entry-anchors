@@ -41,7 +41,7 @@ class AnchorsController extends Controller
     }
 
     /**
-     * The anchor (slug) for a title, for the copy button of Anchor Link fields.
+     * The anchor (slug) for a title, for the copy button of Anchor Text fields.
      */
     public function actionSlug(): Response
     {

@@ -25,7 +25,7 @@ class AnchorLink extends Field
 {
     public static function displayName(): string
     {
-        return Craft::t('entry-anchors', 'Anchor Link');
+        return Craft::t('entry-anchors', 'Anchor Text');
     }
 
     public static function icon(): string

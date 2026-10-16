@@ -2,11 +2,11 @@
 
 Link to a block on a page. Editors give a block an anchor title, and Link fields get dropdowns with the anchors to link to.
 
-- **Anchor Link field**: a block's title and its anchor. The anchor follows the title while the block is new and is kept after
+- **Anchor Text field**: a block's title and its anchor. The anchor follows the title while the block is new and is kept after
   that, so links keep working when the title changes. The front end renders it as the heading's id with `anchor_id()`. Two
   subtle buttons copy the link to the block and its anchor.
 - **Anchor dropdown for linked entries**: when an editor picks an entry in a Link field, a dropdown next to it lists the anchors
-  on that entry (the Anchor Link fields on the entry and its nested entries, in page order). The chosen anchor is stored in the
+  on that entry (the Anchor Text fields on the entry and its nested entries, in page order). The chosen anchor is stored in the
   Link field's URL suffix as `#slug`, so `link.url` ends with it. No template changes needed.
 - **Anchor dropdown for the same page**: Link fields whose URL type allows anchors get a dropdown with the anchors of the page
   the field is on; choosing one sets the URL to `#slug`.
@@ -24,9 +24,9 @@ php craft plugin/install entry-anchors
 
 ## Usage
 
-### Anchor Link field
+### Anchor Text field
 
-Create a field of the "Anchor Link" type (e.g. "Title (Anchor)") and add it to the entry types of your blocks. Render the title
+Create a field of the "Anchor Text" type (e.g. "Title (Anchor)") and add it to the entry types of your blocks. Render the title
 with its anchor as id:
 
 ```twig
@@ -45,7 +45,7 @@ anchor, and that's where links to it go. It also takes a plain text and uses its
 
 Below the title the editor sees the anchor (`Anchor: #how-long-does-a-project-take`) with an "Edit" button:
 
-![An Anchor Link field: the title "Frequently asked questions", a link icon after it, and below it "Anchor: #frequently-asked-questions" with an anchor icon and an Edit button](docs/images/anchor-link-field.png)
+![An Anchor Text field: the title "Frequently asked questions", a link icon after it, and below it "Anchor: #frequently-asked-questions" with an anchor icon and an Edit button](docs/images/anchor-link-field.png)
 
 - while the block isn't on a published page yet (a new block, or one that only exists in a draft), the anchor follows the title,
   like Craft's entry slug;
@@ -81,7 +81,8 @@ next to the entry select:
 
 When the URL type of a Link field allows anchors ("Allow anchors" in its settings), the link type is called "URL/Anchor" and a
 dropdown below the URL input lists the anchors of the page the field is on (the entry that owns it, also when the field is in
-a nested entry). Choosing one sets the URL to `#slug`. The list is the page as it was saved (or autosaved) when the editor
+a nested entry). Choosing one sets the URL to `#slug`. When the Link field shows its "Label" field, the label becomes the anchor's title (as in the
+dropdown), unless the editor typed a label of their own. The list is the page as it was saved (or autosaved) when the editor
 opened it.
 
 ![A Link field set to URL/Anchor: the URL is #ready-to-get-started, chosen in the dropdown below it ("Ready to get started?")](docs/images/link-field-page-anchor.png)

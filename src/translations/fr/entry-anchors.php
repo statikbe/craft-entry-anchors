@@ -1,8 +1,8 @@
 <?php
 
 return [
-    // Anchor Link field
-    'Anchor Link' => 'Lien d’ancre',
+    // Anchor Text field
+    'Anchor Text' => 'Texte d’ancre',
     'The anchor is kept when the title changes, so links to this block keep working. Changing it breaks those links.' => 'L’ancre est conservée quand le titre change, pour que les liens vers ce bloc continuent de fonctionner. La modifier casse ces liens.',
     'Link copied to clipboard.' => 'Lien copié dans le presse-papiers.',
     'Anchor copied to clipboard.' => 'Ancre copiée dans le presse-papiers.',

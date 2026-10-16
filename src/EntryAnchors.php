@@ -20,7 +20,7 @@ use yii\base\Event;
 /**
  * Entry Anchors: anchor titles for blocks, and an anchor dropdown on Link fields to link to a block on an entry.
  *
- * The "Anchor Link" field holds a block's title and its anchor, which is kept when the title changes; the front end renders it
+ * The "Anchor Text" field holds a block's title and its anchor, which is kept when the title changes; the front end renders it
  * as id with anchor_id(). Link fields get dropdowns with the anchors of the linked entry or of the page itself.
  *
  * @method static EntryAnchors getInstance()

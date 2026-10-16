@@ -8,7 +8,7 @@ use craft\services\ProjectConfig;
 use statikbe\entryanchors\fields\AnchorLink;
 
 /**
- * Takes over the Anchor Link fields of the Statik base install's module (`modules\statik\fields\AnchorLink`), so their content
+ * Takes over the Anchor Text fields of the Statik base install's module (`modules\statik\fields\AnchorLink`), so their content
  * stays where it is: the field type is a plain string either way.
  */
 class Install extends Migration
